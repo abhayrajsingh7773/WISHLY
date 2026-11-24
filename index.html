@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="WISHLY — Digital Wishlist Platform. Save what you love. Find what matters.">
+  <title>WISHLY — Save what you love. Find what matters.</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♡</text></svg>">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ===== Toast Notifications ===== -->
+  <div id="toast-container" class="toast-container" role="status" aria-live="polite"></div>
+
+  <!-- ===== Modal Overlay ===== -->
+  <div id="modal-overlay" class="modal-overlay" role="dialog" aria-modal="true">
+    <div id="modal-content" class="modal-content"></div>
+  </div>
+
+  <!-- ===== Navigation ===== -->
+  <nav id="navbar" class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="nav-container">
+      <a href="#" class="logo" data-view="home" aria-label="WISHLY Home">♡ WISHLY</a>
+
+      <ul id="nav-links" class="nav-links">
+        <li><a href="#" data-view="home" class="active">Home</a></li>
+        <li><a href="#" data-view="products">Explore Products</a></li>
+        <li id="nav-wishlist-li" class="hidden"><a href="#" data-view="wishlist">My Wishlist <span id="wishlist-count" class="badge">0</span></a></li>
+        <li id="nav-cart-li" class="hidden"><a href="#" data-view="cart">Cart <span id="cart-count" class="badge">0</span></a></li>
+        <li id="nav-auth"><a href="#" data-view="auth">Login</a></li>
+        <li id="nav-account" class="hidden"><a href="#" data-view="account"><span id="nav-user-name">Account</span></a></li>
+        <li id="nav-admin" class="hidden"><a href="admin.html">Admin Dashboard</a></li>
+      </ul>
+
+      <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Toggle navigation menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===== Main Content ===== -->
+  <main id="main-content">
+
+    <!-- ==============================
+         VIEW: HOME
+    ============================== -->
+    <section id="view-home" class="view active">
+
+      <!-- Hero -->
+      <div class="hero">
+        <div class="container">
+          <h1 class="hero__title">Everything you love, all in one place.</h1>
+          <p class="hero__subtitle">Discover, save, and organize your favorite products. Create wishlists, share your style, and never lose track of what matters.</p>
+          <div class="hero__actions">
+            <a href="#" class="btn btn--primary" data-view="products">Explore Collection</a>
+            <a href="#" class="btn btn--secondary" data-view="auth" id="hero-wishlist-cta">Create Your Wishlist</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Categories -->
+      <div class="section">
+        <div class="container">
+          <h2 class="section__title">Shop by Category</h2>
+          <p class="section__subtitle">Discover curated collections across our most popular categories.</p>
+          <div id="categories-grid" class="categories-grid">
+            <div class="category-card" data-category="Electronics" tabindex="0" role="button" aria-label="Browse Electronics">
+              <span class="category-card__icon" aria-hidden="true">💻</span>
+              <span class="category-card__name">Electronics</span>
+              <span class="category-card__count" id="cat-count-electronics">0 products</span>
+            </div>
+            <div class="category-card" data-category="Fashion" tabindex="0" role="button" aria-label="Browse Fashion">
+              <span class="category-card__icon" aria-hidden="true">👗</span>
+              <span class="category-card__name">Fashion</span>
+              <span class="category-card__count" id="cat-count-fashion">0 products</span>
+            </div>
+            <div class="category-card" data-category="Home & Living" tabindex="0" role="button" aria-label="Browse Home and Living">
+              <span class="category-card__icon" aria-hidden="true">🏡</span>
+              <span class="category-card__name">Home & Living</span>
+              <span class="category-card__count" id="cat-count-home">0 products</span>
+            </div>
+            <div class="category-card" data-category="Books" tabindex="0" role="button" aria-label="Browse Books">
+              <span class="category-card__icon" aria-hidden="true">📚</span>
+              <span class="category-card__name">Books</span>
+              <span class="category-card__count" id="cat-count-books">0 products</span>
+            </div>
+            <div class="category-card" data-category="Beauty" tabindex="0" role="button" aria-label="Browse Beauty">
+              <span class="category-card__icon" aria-hidden="true">✨</span>
+              <span class="category-card__name">Beauty</span>
+              <span class="category-card__count" id="cat-count-beauty">0 products</span>
+            </div>
+            <div class="category-card" data-category="Accessories" tabindex="0" role="button" aria-label="Browse Accessories">
+              <span class="category-card__icon" aria-hidden="true">👜</span>
+              <span class="category-card__name">Accessories</span>
+              <span class="category-card__count" id="cat-count-accessories">0 products</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Products -->
+      <div class="section section--alt">
+        <div class="container">
+          <h2 class="section__title">Featured Products</h2>
+          <p class="section__subtitle">Hand-picked favorites from our collection.</p>
+          <div id="featured-products-grid" class="product-grid"></div>
+        </div>
+      </div>
+
+      <!-- Trending Now -->
+      <div class="section">
+        <div class="container">
+          <h2 class="section__title">Trending Now</h2>
+          <p class="section__subtitle">What everyone is adding to their wishlists this season.</p>
+          <div id="trending-products-grid" class="product-grid"></div>
+        </div>
+      </div>
+
+      <!-- How It Works -->
+      <div class="section section--alt">
+        <div class="container">
+          <h2 class="section__title">How WISHLY Works</h2>
+          <p class="section__subtitle">Three simple steps to organize everything you love.</p>
+          <div class="steps-grid">
+            <div class="step-card">
+              <div class="step-card__number" aria-hidden="true">1</div>
+              <span class="step-card__icon" aria-hidden="true">🔍</span>
+              <h3 class="step-card__title">Browse & Discover</h3>
+              <p class="step-card__text">Explore our curated collection of premium products across multiple categories.</p>
+            </div>
+            <div class="step-card">
+              <div class="step-card__number" aria-hidden="true">2</div>
+              <span class="step-card__icon" aria-hidden="true">❤️</span>
+              <h3 class="step-card__title">Save to Wishlist</h3>
+              <p class="step-card__text">Add your favorites to personalized wishlists. Create as many as you need.</p>
+            </div>
+            <div class="step-card">
+              <div class="step-card__number" aria-hidden="true">3</div>
+              <span class="step-card__icon" aria-hidden="true">🛒</span>
+              <h3 class="step-card__title">Share & Shop</h3>
+              <p class="step-card__text">Move items to your cart and complete your purchase when you're ready.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Why Choose WISHLY -->
+      <div class="section">
+        <div class="container">
+          <h2 class="section__title">Why Choose WISHLY</h2>
+          <p class="section__subtitle">More than a store — a smarter way to shop.</p>
+          <div class="features-grid">
+            <div class="feature-card">
+              <span class="feature-card__icon" aria-hidden="true">🌟</span>
+              <h3 class="feature-card__title">Curated Selection</h3>
+              <p class="feature-card__text">Every product is handpicked for quality and style. We focus on what matters.</p>
+            </div>
+            <div class="feature-card">
+              <span class="feature-card__icon" aria-hidden="true">📋</span>
+              <h3 class="feature-card__title">Smart Organization</h3>
+              <p class="feature-card__text">Create multiple wishlists and keep everything organized exactly the way you want.</p>
+            </div>
+            <div class="feature-card">
+              <span class="feature-card__icon" aria-hidden="true">⚡</span>
+              <h3 class="feature-card__title">Seamless Experience</h3>
+              <p class="feature-card__text">From discovery to checkout, every step is effortless and beautifully designed.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA Section -->
+      <div class="cta-section">
+        <div class="container">
+          <h2>Start Building Your Wishlist Today</h2>
+          <p>Join thousands of users who organize their dreams with WISHLY.</p>
+          <a href="#" class="btn" data-view="auth" id="cta-get-started">Get Started Free</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================
+         VIEW: PRODUCTS
+    ============================== -->
+    <section id="view-products" class="view">
+      <div class="section">
+        <div class="container">
+          <h2 class="section__title">Explore Our Collection</h2>
+          <p class="section__subtitle">Find the perfect products to add to your wishlists.</p>
+
+          <!-- Toolbar -->
+          <div class="products-toolbar">
+            <input type="text" id="search-input" class="form-input" placeholder="Search products..." aria-label="Search products">
+
+            <div class="filter-group">
+              <label for="category-filter">Category:</label>
+              <select id="category-filter" class="form-select" aria-label="Filter by category">
+                <option value="">All Categories</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label for="sort-select">Sort:</label>
+              <select id="sort-select" class="form-select" aria-label="Sort products">
+                <option value="">Default</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="rating">Top Rated</option>
+                <option value="name">Name: A–Z</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <input type="number" id="price-min" class="form-input" placeholder="Min ₹" min="0" aria-label="Minimum price" style="width:90px">
+              <span class="text-muted">–</span>
+              <input type="number" id="price-max" class="form-input" placeholder="Max ₹" min="0" aria-label="Maximum price" style="width:90px">
+              <button id="apply-price-btn" class="btn btn--small btn--secondary">Apply</button>
+            </div>
+
+            <button id="clear-filters-btn" class="btn btn--small btn--ghost">Clear Filters</button>
+          </div>
+
+          <p id="product-count" class="product-count"></p>
+
+          <div id="products-grid" class="product-grid"></div>
+
+          <div id="products-empty-state" class="empty-state hidden">
+            <div class="empty-state__icon" aria-hidden="true">🔍</div>
+            <h3 class="empty-state__title">No Products Found</h3>
+            <p class="empty-state__message">Try adjusting your search or filters to find what you're looking for.</p>
+            <button class="btn btn--secondary" id="empty-clear-filters">Clear All Filters</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================
+         VIEW: PRODUCT DETAIL
+    ============================== -->
+    <section id="view-product-detail" class="view">
+      <div class="section">
+        <div class="container">
+          <button id="back-to-products" class="back-link" aria-label="Back to products">← Back to Products</button>
+          <div id="product-detail-content"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================
+         VIEW: WISHLIST
+    ============================== -->
+    <section id="view-wishlist" class="view">
+      <div class="section">
+        <div class="container">
+          <h2 class="section__title">My Wishlists</h2>
+          <p class="section__subtitle">Organize and manage your favorite finds.</p>
+          <div class="wishlist-layout">
+            <aside class="wishlist-sidebar" id="wishlist-sidebar">
+              <h3>Your Wishlists</h3>
+              <div class="create-wishlist">
+                <input type="text" id="create-wishlist-input" class="form-input" placeholder="New wishlist name..." aria-label="New wishlist name" maxlength="50">
+                <button id="create-wishlist-btn" class="btn btn--primary btn--small" aria-label="Create wishlist">+</button>
+              </div>
+              <ul class="wishlist-list" id="wishlist-list"></ul>
+            </aside>
+            <div class="wishlist-content" id="wishlist-content">
+              <div class="empty-state">
+                <div class="empty-state__icon" aria-hidden="true">📋</div>
+                <h3 class="empty-state__title">Select a Wishlist</h3>
+                <p class="empty-state__message">Choose a wishlist from the sidebar or create a new one to get started.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================
+         VIEW: CART
+    ============================== -->
+    <section id="view-cart" class="view">
+      <div class="section">
+        <div class="container">
+          <h2 class="section__title">Shopping Cart</h2>
+          <div id="cart-main-content">
+            <div class="cart-layout">
+              <div class="cart-items" id="cart-items-container"></div>
+              <div class="cart-summary" id="cart-summary">
+                <h3>Order Summary</h3>
+                <div class="cart-summary-row">
+                  <span>Subtotal</span>
+                  <span id="cart-subtotal">$0.00</span>
+                </div>
+                <div class="cart-summary-row">
+                  <span>Shipping</span>
+                  <span>Free</span>
+                </div>
+                <div class="cart-summary-row total">
+                  <span>Total</span>
+                  <span id="cart-total">$0.00</span>
+                </div>
+                <button id="checkout-btn" class="btn btn--primary btn--full" data-view="checkout">Proceed to Checkout</button>
+                <button class="btn btn--ghost btn--full mt-2" data-view="products">Continue Shopping</button>
+              </div>
+            </div>
+          </div>
+          <div id="cart-empty-state" class="empty-state hidden">
+            <div class="empty-state__icon" aria-hidden="true">🛒</div>
+            <h3 class="empty-state__title">Your Cart is Empty</h3>
+            <p class="empty-state__message">Looks like you haven't added anything to your cart yet.</p>
+            <a href="#" class="btn btn--primary" data-view="products">Start Shopping</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================
+         VIEW: CHECKOUT
+    ============================== -->
+    <section id="view-checkout" class="view">
+      <div class="section">
+        <div class="container">
+          <h2 class="section__title">Checkout</h2>
+          <div class="checkout-layout">
+            <div class="checkout-form-container">
+              <h3>Delivery Information</h3>
+              <form id="checkout-form" novalidate>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" for="checkout-name">Full Name *</label>
+                    <input type="text" id="checkout-name" class="form-input" placeholder="Your full name" required>
+                    <span class="form-error" id="checkout-name-error">Please enter your name</span>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="checkout-email">Email Address *</label>
+                    <input type="email" id="checkout-email" class="form-input" placeholder="your@email.com" required>
+                    <span class="form-error" id="checkout-email-error">Please enter a valid email</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="checkout-address">Delivery Address *</label>
+                  <textarea id="checkout-address" class="form-input form-textarea" placeholder="Full delivery address" required rows="3"></textarea>
+                  <span class="form-error" id="checkout-address-error">Please enter your delivery address</span>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="checkout-phone">Phone Number *</label>
+                  <input type="tel" id="checkout-phone" class="form-input" placeholder="(+91) 98765-43210" required>
+                  <span class="form-error" id="checkout-phone-error">Please enter your phone number</span>
+                </div>
+                <button type="submit" class="btn btn--primary btn--full">Place Order</button>
+              </form>
+            </div>
+            <div class="order-summary-card" id="checkout-order-summary">
+              <h3>Order Summary</h3>
+              <div id="checkout-items"></div>
+              <div class="cart-summary-row total" style="margin-top:16px">
+                <span>Total</span>
+                <span id="checkout-total">$0.00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================
+         VIEW: ORDER CONFIRMATION
+    ============================== -->
+    <section id="view-order-confirmation" class="view">
+      <div class="section">
+        <div class="container">
+          <div id="confirmation-details" class="confirmation"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================
+         VIEW: ACCOUNT
+    ============================== -->
+    <section id="view-account" class="view">
+      <div class="section">
+        <div class="container">
+          <h2 class="section__title">My Account</h2>
+          <div class="account-layout">
+            <div class="account-info" id="account-info"></div>
+            <div class="order-history" id="order-history">
+              <h3>Order History</h3>
+              <div id="order-history-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================
+         VIEW: AUTH (Login / Register)
+    ============================== -->
+    <section id="view-auth" class="view">
+      <div class="section">
+        <div class="container">
+          <div id="auth-container" class="auth-container">
+            <h2>Welcome to WISHLY</h2>
+            <p class="auth-subtitle">Save what you love. Find what matters.</p>
+
+            <div class="auth-tabs">
+              <button class="auth-tab active" data-auth-tab="login" id="tab-login">Login</button>
+              <button class="auth-tab" data-auth-tab="register" id="tab-register">Register</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" novalidate>
+              <div class="form-group">
+                <label class="form-label" for="login-email">Email Address</label>
+                <input type="email" id="login-email" class="form-input" placeholder="your@email.com" required>
+                <span class="form-error" id="login-email-error">Please enter a valid email</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="login-password">Password</label>
+                <input type="password" id="login-password" class="form-input" placeholder="Enter your password" required>
+                <span class="form-error" id="login-password-error">Please enter your password</span>
+              </div>
+              <button type="submit" class="btn btn--primary btn--full">Login</button>
+            </form>
+
+            <!-- Register Form -->
+            <form id="register-form" class="hidden" novalidate>
+              <div class="form-group">
+                <label class="form-label" for="register-name">Full Name</label>
+                <input type="text" id="register-name" class="form-input" placeholder="Your full name" required>
+                <span class="form-error" id="register-name-error">Please enter your name</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="register-email">Email Address</label>
+                <input type="email" id="register-email" class="form-input" placeholder="your@email.com" required>
+                <span class="form-error" id="register-email-error">Please enter a valid email</span>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="register-password">Password</label>
+                  <input type="password" id="register-password" class="form-input" placeholder="Min 6 characters" required>
+                  <span class="form-error" id="register-password-error">Min 6 characters required</span>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="register-confirm">Confirm Password</label>
+                  <input type="password" id="register-confirm" class="form-input" placeholder="Confirm password" required>
+                  <span class="form-error" id="register-confirm-error">Passwords do not match</span>
+                </div>
+              </div>
+              <button type="submit" class="btn btn--primary btn--full">Create Account</button>
+            </form>
+
+            <!-- Demo Credentials -->
+            <div class="demo-credentials" id="demo-credentials">
+              <strong>Demo Accounts</strong>
+              <p><strong>User:</strong> <code>demo@wishly.com</code> / <code>demo1234</code></p>
+              <p><strong>Admin:</strong> <code>admin@wishly.com</code> / <code>admin1234</code></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h3 class="footer-logo">♡ WISHLY</h3>
+          <p>Save what you love. Find what matters. A premium digital wishlist platform for organizing your favorite products.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="#" data-view="home">Home</a></li>
+            <li><a href="#" data-view="products">Products</a></li>
+            <li><a href="#" data-view="wishlist">My Wishlist</a></li>
+            <li><a href="#" data-view="cart">Cart</a></li>
+            <li><a href="#" data-view="account">My Account</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Categories</h4>
+          <ul class="footer-links">
+            <li><a href="#" data-category="Electronics">Electronics</a></li>
+            <li><a href="#" data-category="Fashion">Fashion</a></li>
+            <li><a href="#" data-category="Home & Living">Home & Living</a></li>
+            <li><a href="#" data-category="Books">Books</a></li>
+            <li><a href="#" data-category="Beauty">Beauty</a></li>
+            <li><a href="#" data-category="Accessories">Accessories</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <p>hello@wishly.demo</p>
+          <p>+91 98765 43210</p>
+          <p class="mt-2"><small>Academic Demonstration Project</small></p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 WISHLY. Academic demonstration project. All rights reserved.</p>
+        <button id="reset-demo-btn" class="btn btn--small btn--secondary">Reset Demo Data</button>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

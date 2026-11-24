@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WISHLY — Admin Dashboard</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♡</text></svg>">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="admin-body">
+
+  <!-- Toast Notifications -->
+  <div id="toast-container" class="toast-container" role="status" aria-live="polite"></div>
+
+  <!-- Modal Overlay -->
+  <div id="modal-overlay" class="modal-overlay" role="dialog" aria-modal="true">
+    <div id="modal-content" class="modal-content"></div>
+  </div>
+
+  <!-- Admin Sidebar Overlay (mobile) -->
+  <div id="admin-sidebar-overlay" class="admin-sidebar-overlay"></div>
+
+  <div class="admin-layout">
+
+    <!-- ===== Sidebar ===== -->
+    <aside class="admin-sidebar" id="admin-sidebar" role="navigation" aria-label="Admin navigation">
+      <div class="admin-sidebar-header">
+        <a href="index.html" class="logo">♡ WISHLY</a>
+        <span class="admin-label">Admin Panel</span>
+      </div>
+      <ul class="admin-nav" id="admin-nav">
+        <li class="admin-nav-item active">
+          <a href="#" data-section="dashboard">
+            <span class="nav-icon" aria-hidden="true">📊</span> Dashboard
+          </a>
+        </li>
+        <li class="admin-nav-item">
+          <a href="#" data-section="products">
+            <span class="nav-icon" aria-hidden="true">📦</span> Products
+          </a>
+        </li>
+        <li class="admin-nav-item">
+          <a href="#" data-section="categories">
+            <span class="nav-icon" aria-hidden="true">🏷️</span> Categories
+          </a>
+        </li>
+        <li class="admin-nav-item">
+          <a href="#" data-section="orders">
+            <span class="nav-icon" aria-hidden="true">📋</span> Orders
+          </a>
+        </li>
+        <li class="admin-nav-item">
+          <a href="#" data-section="reviews">
+            <span class="nav-icon" aria-hidden="true">⭐</span> Reviews
+          </a>
+        </li>
+        <li><div class="admin-nav-separator"></div></li>
+        <li class="admin-nav-item">
+          <a href="index.html">
+            <span class="nav-icon" aria-hidden="true">←</span> Back to Site
+          </a>
+        </li>
+        <li class="admin-nav-item">
+          <button data-action="logout">
+            <span class="nav-icon" aria-hidden="true">🚪</span> Logout
+          </button>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- ===== Main Content ===== -->
+    <main class="admin-content" id="admin-content">
+
+      <!-- ==============================
+           DASHBOARD
+      ============================== -->
+      <section id="admin-dashboard" class="admin-section active">
+        <div class="admin-header">
+          <h1>Dashboard Overview</h1>
+          <span class="text-muted" id="admin-welcome">Welcome, Admin</span>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-card__icon" aria-hidden="true">📦</div>
+            <div class="stat-card__number" id="stat-products">0</div>
+            <div class="stat-card__label">Total Products</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__icon" aria-hidden="true">👤</div>
+            <div class="stat-card__number" id="stat-users">0</div>
+            <div class="stat-card__label">Registered Users</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__icon" aria-hidden="true">📋</div>
+            <div class="stat-card__number" id="stat-orders">0</div>
+            <div class="stat-card__label">Total Orders</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__icon" aria-hidden="true">⏳</div>
+            <div class="stat-card__number" id="stat-pending">0</div>
+            <div class="stat-card__label">Pending Orders</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__icon" aria-hidden="true">⭐</div>
+            <div class="stat-card__number" id="stat-reviews">0</div>
+            <div class="stat-card__label">Total Reviews</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+          <div>
+            <h3 class="mb-2">Recent Orders</h3>
+            <div class="admin-table-container">
+              <table class="admin-table" id="recent-orders-table">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <h3 class="mb-2">Recent Reviews</h3>
+            <div id="recent-reviews"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================
+           PRODUCTS
+      ============================== -->
+      <section id="admin-products" class="admin-section">
+        <div class="admin-header">
+          <h1>Product Management</h1>
+          <button class="btn btn--primary" id="add-product-btn">+ Add Product</button>
+        </div>
+
+        <!-- Product Form -->
+        <div class="admin-form-container hidden" id="product-form-container">
+          <form class="admin-form" id="product-form" novalidate>
+            <h3 id="product-form-title">Add New Product</h3>
+            <input type="hidden" id="product-edit-id" value="">
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="product-name">Product Name *</label>
+                <input type="text" id="product-name" class="form-input" placeholder="Product name" required>
+                <span class="form-error" id="product-name-error">Name is required</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="product-category">Category *</label>
+                <select id="product-category" class="form-select" required>
+                  <option value="">Select category</option>
+                </select>
+                <span class="form-error" id="product-category-error">Category is required</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="product-description">Description *</label>
+              <textarea id="product-description" class="form-input form-textarea" placeholder="Product description" required rows="3"></textarea>
+              <span class="form-error" id="product-description-error">Description is required</span>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="product-price">Price ($) *</label>
+                <input type="number" id="product-price" class="form-input" placeholder="0.00" min="0.01" step="0.01" required>
+                <span class="form-error" id="product-price-error">Valid price required</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="product-stock">Stock Quantity *</label>
+                <input type="number" id="product-stock" class="form-input" placeholder="0" min="0" required>
+                <span class="form-error" id="product-stock-error">Valid stock required</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="product-image">Image URL</label>
+              <input type="text" id="product-image" class="form-input" placeholder="https://picsum.photos/seed/product/400/400">
+            </div>
+
+            <div class="form-row">
+              <div class="checkbox-group">
+                <input type="checkbox" id="product-featured">
+                <label for="product-featured">Featured Product</label>
+              </div>
+              <div class="checkbox-group">
+                <input type="checkbox" id="product-trending">
+                <label for="product-trending">Trending Product</label>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn--primary">Save Product</button>
+              <button type="button" class="btn btn--secondary" id="cancel-product-btn">Cancel</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Products Table -->
+        <div class="admin-table-container">
+          <table class="admin-table" id="products-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==============================
+           CATEGORIES
+      ============================== -->
+      <section id="admin-categories" class="admin-section">
+        <div class="admin-header">
+          <h1>Category Management</h1>
+        </div>
+
+        <div class="flex-gap mb-3" style="display:flex;gap:12px;max-width:400px">
+          <input type="text" id="new-category-input" class="form-input" placeholder="New category name..." maxlength="50" aria-label="New category name">
+          <button class="btn btn--primary" id="add-category-btn">Add</button>
+        </div>
+
+        <div class="admin-table-container">
+          <table class="admin-table" id="categories-table">
+            <thead>
+              <tr>
+                <th>Category Name</th>
+                <th>Products</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==============================
+           ORDERS
+      ============================== -->
+      <section id="admin-orders" class="admin-section">
+        <div class="admin-header">
+          <h1>Order Management</h1>
+          <div class="filter-group">
+            <label for="order-status-filter">Filter:</label>
+            <select id="order-status-filter" class="form-select" aria-label="Filter by status">
+              <option value="">All Orders</option>
+              <option value="Pending">Pending</option>
+              <option value="Processing">Processing</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="admin-table-container">
+          <table class="admin-table" id="orders-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==============================
+           REVIEWS
+      ============================== -->
+      <section id="admin-reviews" class="admin-section">
+        <div class="admin-header">
+          <h1>Review Management</h1>
+        </div>
+
+        <div class="admin-table-container">
+          <table class="admin-table" id="reviews-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>User</th>
+                <th>Rating</th>
+                <th>Review</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Mobile sidebar toggle -->
+  <button class="admin-mobile-toggle" id="admin-mobile-toggle" aria-label="Toggle admin menu">☰</button>
+
+  <script src="admin.js"></script>
+</body>
+</html>
